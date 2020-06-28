@@ -1,7 +1,10 @@
 package com.tsak.ftb.mmmsearch.utility;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,9 +29,13 @@ public class NetUtility {
         ;
     }
 
+    public final static String PATH_SEPARATOR = "/";
+    public final static String PROTOCOL_SUFFIX = "://";
+    public final static String DEFAULT_ENCODING = "SHIFT_JIS";
+
     public enum PROTOCOL {
-        HTTP("http://"),
-        HTTPS("https://"),
+        HTTP("http" + PROTOCOL_SUFFIX),
+        HTTPS("https" + PROTOCOL_SUFFIX),
         ;
 
         private String value;
@@ -51,9 +58,6 @@ public class NetUtility {
             return HTTP;
         }
     }
-
-    public final static String PATH_SEPARATOR = "/";
-    public final static String DEFAULT_ENCODING = "SHIFT_JIS";
 
     private final static int TIMEOUT_MS = 60000;
 
@@ -112,6 +116,17 @@ public class NetUtility {
             throw new NetUtilException(url, findRegex, regex);
         } catch (NetUtilException e) {}
         return Collections.unmodifiableList(lines);
+    }
+
+    public static Drawable readImage(URL url) {
+
+        Drawable image = null;
+        try {
+            InputStream is = (InputStream) url.getContent();
+            image = Drawable.createFromStream(is, "");
+            is.close();
+        } catch (IOException ignored) {}
+        return image;
     }
 
     private static SSLContext createNonAuthContext() {

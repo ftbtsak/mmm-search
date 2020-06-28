@@ -1,29 +1,36 @@
 package com.tsak.ftb.mmmsearch;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tsak.ftb.mmmsearch.searcher.ThreadInfo;
+import com.tsak.ftb.mmmsearch.utility.ImageUtility;
+import com.tsak.ftb.mmmsearch.utility.NetUtility;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
 
     public enum COLUMN {
         URL,
+        IMAGE,
         MAIL,
         TITLE,
         ALL,
@@ -33,6 +40,8 @@ class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
     private LayoutInflater layoutInflater;
     private List<ThreadInfo> threadInfoList;
     private ItemListener itemListener;
+    private Map<ThreadInfo, Drawable> threadImages;
+    private Map<URL, AtomicBoolean> threadImageReadingMap;
 
     SearchResultListAdapter(@NonNull Context context, ItemListener itemListener) {
         super(context, R.layout.result_list_item);
@@ -40,6 +49,8 @@ class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
         this.layoutInflater = LayoutInflater.from(context);
         this.threadInfoList = new ArrayList<>();
         this.itemListener = itemListener;
+        this.threadImages = new LinkedHashMap<>();
+        this.threadImageReadingMap = new LinkedHashMap<>();
     }
 
     @Override
@@ -66,6 +77,48 @@ class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
             }
         });
 
+        final URL imageURL = threadInfoList.get(position).imgUrl();
+        final ImageView resultThreadImageView = convertView.findViewById(R.id.resultThreadImageView);
+        if (threadImages.containsKey(threadInfoList.get(position))) {
+            resultThreadImageView.setImageDrawable(threadImages.get(threadInfoList.get(position)));
+        } else if (null != imageURL) {
+            final Handler handler = new Handler();
+            final View finalConvertView = convertView;
+            if (!threadImageReadingMap.containsKey(imageURL)) {
+                threadImageReadingMap.put(imageURL, new AtomicBoolean(false));
+                notifyDataSetChanged();
+            }
+            try {
+                if (!threadImageReadingMap.get(imageURL).get()) {
+                    threadImageReadingMap.get(imageURL).set(true);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Drawable drawable = NetUtility.readImage(imageURL);
+                            if (null != drawable) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        threadImages.put(threadInfoList.get(position), ImageUtility.resize(
+                                                finalConvertView.getResources(), drawable, 50, 50));
+                                        resultThreadImageView.setImageDrawable(threadImages.get(threadInfoList.get(position)));
+                                        notifyDataSetChanged();
+                                    }
+                                });
+                            }
+                        }
+                    }).start();
+                }
+            } catch (NullPointerException e) {}
+        }
+        resultThreadImageView.setOnClickListener(allClickListener);
+        resultThreadImageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                itemListener.onLongClickItem(v, COLUMN.IMAGE, threadInfoList.get(position));
+                return true;
+            }
+        });
 
         final TextView resultThreadMailTextView = convertView.findViewById(R.id.resultThreadMailTextView);
         resultThreadMailTextView.setText(threadInfoList.get(position).mail());

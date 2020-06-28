@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.tsak.ftb.mmmsearch.utility.NetUtility.DEFAULT_ENCODING;
+import static com.tsak.ftb.mmmsearch.utility.NetUtility.PROTOCOL_SUFFIX;
 
 public class ThreadSearcher {
 
@@ -32,8 +33,14 @@ public class ThreadSearcher {
     private final static String TITLE_END_SIGNATURE_2 = "<br>";
     private final static String TITLE_IP_BEGIN_SIGNATURE = "\\[<font color=\"#ff0000\">";
     private final static String TITLE_IP_END_SIGNATURE = "</font>\\]<br>";
-    private final static String MAIL_BEGIN_SIGNATURE = "<a href=\"mailto:";
-    private final static String MAIL_END_SIGNATURE = "\">";
+    private final static String MAIL_BEGIN_SIGNATURE_1 = "<a href=\"mailto:";
+    private final static String MAIL_BEGIN_SIGNATURE_2 = "<a href='mailto:";
+    private final static String MAIL_END_SIGNATURE_1 = "\">";
+    private final static String MAIL_END_SIGNATURE_2 = "'>";
+    private final static String THREAD_IMG_BEGIN_SIGNATURE_1 = "<img src='";
+    private final static String THREAD_IMG_BEGIN_SIGNATURE_2 = "<img src=\"";
+    private final static String THREAD_IMG_END_SIGNATURE_1 = "' ";
+    private final static String THREAD_IMG_END_SIGNATURE_2 = "\" ";
 
     private List<String> boardList;
     private ThreadSearcherCallback callback;
@@ -68,14 +75,29 @@ public class ThreadSearcher {
                     }
                     String mail = "";
                     for (String line : lines) {
-                        if (line.contains(MAIL_BEGIN_SIGNATURE)) {
+                        if (line.contains(MAIL_BEGIN_SIGNATURE_1) || line.contains(MAIL_BEGIN_SIGNATURE_2)) {
                             mail = line
-                                    .replaceFirst(".*" + MAIL_BEGIN_SIGNATURE, "")
-                                    .replaceFirst(MAIL_END_SIGNATURE + ".*", "");
+                                    .replaceFirst(".*" + MAIL_BEGIN_SIGNATURE_1, "")
+                                    .replaceFirst(".*" + MAIL_BEGIN_SIGNATURE_2, "")
+                                    .replaceFirst(MAIL_END_SIGNATURE_1 + ".*", "")
+                                    .replaceFirst(MAIL_END_SIGNATURE_2 + ".*", "");
                             break;
                         }
                     }
-                    callback.notify(new ThreadInfo(threadURL, title, mail));
+                    URL imageURL = null;
+                    for (String line : lines) {
+                        if (line.contains(THREAD_IMG_BEGIN_SIGNATURE_1) || line.contains(THREAD_IMG_BEGIN_SIGNATURE_2)) {
+                            try {
+                                imageURL = new URL(threadURL.getProtocol() + PROTOCOL_SUFFIX + threadURL.getHost() + line
+                                        .replaceFirst(".*" + THREAD_IMG_BEGIN_SIGNATURE_1, "")
+                                        .replaceFirst(".*" + THREAD_IMG_BEGIN_SIGNATURE_2, "")
+                                        .replaceFirst(THREAD_IMG_END_SIGNATURE_1 + ".*", "")
+                                        .replaceFirst(THREAD_IMG_END_SIGNATURE_2 + ".*", ""));
+                            } catch (MalformedURLException e) {}
+                            break;
+                        }
+                    }
+                    callback.notify(ThreadInfo.newInstance(threadURL, imageURL, title, mail));
                 } catch (NetUtility.NetUtilException e) {
                 } catch (MalformedURLException e) {}
             }
