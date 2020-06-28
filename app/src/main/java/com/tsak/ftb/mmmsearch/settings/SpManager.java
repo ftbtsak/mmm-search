@@ -1,4 +1,4 @@
-package com.tsak.ftb.mmmsearch.settings.appselector;
+package com.tsak.ftb.mmmsearch.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;

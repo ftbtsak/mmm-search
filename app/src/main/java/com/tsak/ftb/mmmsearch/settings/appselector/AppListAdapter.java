@@ -100,8 +100,8 @@ public class AppListAdapter extends ArrayAdapter<AppInfo> {
         notifyDataSetChanged();
     }
 
-    public void unChecked() {
-        selectedIndex = -1;
+    public void setChecked(String appName, String packageName, String className) {
+        selectedIndex = appList.indexOf(new AppInfo.AppInfoBuilder(appName, packageName, className).build());
         notifyDataSetChanged();
     }
 

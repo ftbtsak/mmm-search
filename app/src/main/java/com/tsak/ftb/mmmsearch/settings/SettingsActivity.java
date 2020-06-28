@@ -21,12 +21,13 @@ import com.tsak.ftb.mmmsearch.R;
 import com.tsak.ftb.mmmsearch.settings.appselector.AppInfo;
 import com.tsak.ftb.mmmsearch.settings.appselector.AppListAdapter;
 import com.tsak.ftb.mmmsearch.settings.appselector.AppUtility;
-import com.tsak.ftb.mmmsearch.settings.appselector.SpManager;
 import com.tsak.ftb.mmmsearch.utility.NetUtility;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.tsak.ftb.mmmsearch.settings.appselector.AppUtility.UNSELECTED_APP;
 
@@ -74,7 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
                 spManager.getString(SpManager.STRING_KEY.PACKAGE_NAME));
 
         final View chooseAppView = LayoutInflater.from(this).inflate(R.layout.list_for_dialog, null);
-        ListView chooseAppListView = chooseAppView.findViewById(R.id.forDialogListView);
+        final ListView chooseAppListView = chooseAppView.findViewById(R.id.forDialogListView);
         chooseAppListView.setFastScrollEnabled(true);
         chooseAppListView.setFastScrollAlwaysVisible(false);
         final AppListAdapter appListAdapter = new AppListAdapter(this, new ArrayList<AppInfo>());
@@ -86,6 +87,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
         chooseAppListView.setAdapter(appListAdapter);
+        chooseAppListView.setEnabled(false);
 
         final AlertDialog chooseAppDialog = new AlertDialog.Builder(this)
                 .setTitle("Select Open App")
@@ -106,13 +108,16 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 })
                 .create();
+
+        final AtomicBoolean isFinishCollect = new AtomicBoolean(false);
         Button chooseAppButton = findViewById(R.id.chooseAppButton);
         chooseAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Handler handler = new Handler();
                 chooseAppDialog.show();
-                if (0 == appListAdapter.getCount()) {
+                if (!isFinishCollect.get()) {
+                    appListAdapter.clear();
                     collectThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -135,12 +140,28 @@ public class SettingsActivity extends AppCompatActivity {
                                                 }
                                             });
                                         }
+
+                                        @Override
+                                        public void finish() {
+                                            isFinishCollect.set(true);
+                                            handler.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    appListAdapter.setChecked(spManager.getString(SpManager.STRING_KEY.APP_NAME),
+                                                            spManager.getString(SpManager.STRING_KEY.PACKAGE_NAME),
+                                                            spManager.getString(SpManager.STRING_KEY.CLASS_NAME));
+                                                    chooseAppListView.setEnabled(true);
+                                                }
+                                            });
+                                        }
                                     });
                         }
                     });
                     collectThread.start();
                 } else {
-                    appListAdapter.unChecked();
+                    appListAdapter.setChecked(spManager.getString(SpManager.STRING_KEY.APP_NAME),
+                            spManager.getString(SpManager.STRING_KEY.PACKAGE_NAME),
+                            spManager.getString(SpManager.STRING_KEY.CLASS_NAME));
                 }
             }
         });
@@ -190,7 +211,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         setSelectedAppView(appName, packageName);
         isChanged = true;
-
     }
 
     private void setSelectedAppView(String appName, String packageName) {

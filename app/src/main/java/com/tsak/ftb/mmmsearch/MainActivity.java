@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.tsak.ftb.mmmsearch.searcher.ThreadInfo;
 import com.tsak.ftb.mmmsearch.searcher.ThreadSearcher;
 import com.tsak.ftb.mmmsearch.settings.SettingsActivity;
-import com.tsak.ftb.mmmsearch.settings.appselector.SpManager;
+import com.tsak.ftb.mmmsearch.settings.SpManager;
 import com.tsak.ftb.mmmsearch.utility.NetUtility;
 
 import java.util.Collections;
