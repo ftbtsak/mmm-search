@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".settings.SettingsActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
+
+    <TextView
+        android:id="@+id/openAppLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open App:"
+        android:paddingTop="15dp"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:id="@+id/openAppNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:paddingTop="10dp"
+        android:layout_toEndOf="@id/openAppLabel"
+        android:layout_toStartOf="@id/unSelectAppButton"
+        android:text="loading..."
+        android:gravity="center"/>
+
+    <ImageView
+        android:id="@+id/openAppImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        app:srcCompat="@android:color/transparent"
+        android:layout_toEndOf="@id/openAppLabel"
+        android:layout_toStartOf="@id/unSelectAppButton"
+        android:layout_below="@id/openAppNameTextView"/>
+
+    <Button
+        android:id="@+id/unSelectAppButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="UnSelect"
+        android:layout_toLeftOf="@id/chooseAppButton" />
+
+    <Button
+        android:id="@+id/chooseAppButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="Choose"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/protocolLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:paddingTop="10dp"
+        android:layout_below="@id/openAppImageView"
+        android:text="Open Protocol:"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/protocolTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:paddingTop="10dp"
+        android:layout_toEndOf="@id/protocolLabel"
+        android:layout_toStartOf="@id/chooseProtocolButton"
+        android:layout_below="@id/openAppImageView"
+        android:text="loading..."
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/chooseProtocolButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="Choose"
+        android:layout_below="@id/openAppImageView"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
