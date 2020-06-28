@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SpManager spManager;
     private int wordIndex = 0;
+    private NetUtility.PROTOCOL openProtocol;
     private AtomicBoolean isSearching = new AtomicBoolean(false);
 
     private TextView targetWordTextView;
@@ -119,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        openProtocol = NetUtility.PROTOCOL.findProtocol(spManager.getString(SpManager.STRING_KEY.OPEN_PROTOCOL));
+
         searchResultListView = findViewById(R.id.searchResultListView);
         searchResultListAdapter = new SearchResultListAdapter(this, new SearchResultListAdapter.ItemListener() {
             @Override
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (column) {
                     case ALL:
                         Intent intent = new Intent();
-                        Uri uri = Uri.parse(threadInfo.threadURL().toString().replaceFirst(NetUtility.PROTOCOL_HTTPS, NetUtility.PROTOCOL_HTTP));
+                        Uri uri = Uri.parse(threadInfo.threadURL().toString().replaceFirst(NetUtility.PROTOCOL.HTTPS.value(), openProtocol.value()));
                         if (!"".equals(spManager.getString(SpManager.STRING_KEY.APP_NAME))) {
                             intent.setClassName(spManager.getString(SpManager.STRING_KEY.PACKAGE_NAME),
                                     spManager.getString(SpManager.STRING_KEY.CLASS_NAME));
@@ -201,6 +204,9 @@ public class MainActivity extends AppCompatActivity {
 
         switch(requestCode) {
             case SETTINGS_REQ_CODE:
+                if (null != data && data.getBooleanExtra(SettingsActivity.SETTINGS_CHANGED_KEY, false)) {
+                    openProtocol = NetUtility.PROTOCOL.findProtocol(spManager.getString(SpManager.STRING_KEY.OPEN_PROTOCOL));
+                }
                 break;
             default:
                 break;

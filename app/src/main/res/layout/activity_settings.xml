@@ -53,4 +53,35 @@
         android:text="Choose"
         android:layout_alignParentEnd="true" />
 
+    <TextView
+        android:id="@+id/protocolLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:paddingTop="10dp"
+        android:layout_below="@id/openAppImageView"
+        android:text="Open Protocol:"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/protocolTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:paddingTop="10dp"
+        android:layout_toEndOf="@id/protocolLabel"
+        android:layout_toStartOf="@id/chooseProtocolButton"
+        android:layout_below="@id/openAppImageView"
+        android:text="loading..."
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/chooseProtocolButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="Choose"
+        android:layout_below="@id/openAppImageView"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

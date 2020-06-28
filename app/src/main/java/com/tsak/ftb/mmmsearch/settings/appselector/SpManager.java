@@ -30,6 +30,7 @@ public class SpManager {
         APP_NAME(DEFAULT_STRING),
         PACKAGE_NAME(DEFAULT_STRING),
         CLASS_NAME(DEFAULT_STRING),
+        OPEN_PROTOCOL(DEFAULT_STRING),
         ;
 
         private String defaultValue;

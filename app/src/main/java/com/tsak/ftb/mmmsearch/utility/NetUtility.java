@@ -26,8 +26,32 @@ public class NetUtility {
         ;
     }
 
-    public final static String PROTOCOL_HTTP = "http://";
-    public final static String PROTOCOL_HTTPS = "https://";
+    public enum PROTOCOL {
+        HTTP("http://"),
+        HTTPS("https://"),
+        ;
+
+        private String value;
+
+        PROTOCOL(String value) {
+            this.value = value;
+        }
+
+        public String value() {
+            return value;
+        }
+
+        public static PROTOCOL findProtocol(String target) {
+
+            for (PROTOCOL key : PROTOCOL.values()) {
+                if (key.name().equals(target.toUpperCase())) {
+                    return key;
+                }
+            }
+            return HTTP;
+        }
+    }
+
     public final static String PATH_SEPARATOR = "/";
     public final static String DEFAULT_ENCODING = "SHIFT_JIS";
 

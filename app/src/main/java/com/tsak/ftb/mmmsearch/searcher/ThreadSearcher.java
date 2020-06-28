@@ -85,7 +85,7 @@ public class ThreadSearcher {
                 threadIdMap.get(board)
                         .addAll(parseThreadIdList(
                         NetUtility.readHtml(
-                                new URL(NetUtility.PROTOCOL_HTTPS + board
+                                new URL(NetUtility.PROTOCOL.HTTPS.value() + board
                                         + SEARCH_KEY + URLEncoder.encode(query, DEFAULT_ENCODING)))));
             } catch (IllegalArgumentException e) {
             } catch (UnsupportedEncodingException e) {

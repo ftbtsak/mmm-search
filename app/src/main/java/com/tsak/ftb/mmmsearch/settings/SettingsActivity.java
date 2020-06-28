@@ -22,17 +22,31 @@ import com.tsak.ftb.mmmsearch.settings.appselector.AppInfo;
 import com.tsak.ftb.mmmsearch.settings.appselector.AppListAdapter;
 import com.tsak.ftb.mmmsearch.settings.appselector.AppUtility;
 import com.tsak.ftb.mmmsearch.settings.appselector.SpManager;
+import com.tsak.ftb.mmmsearch.utility.NetUtility;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 import static com.tsak.ftb.mmmsearch.settings.appselector.AppUtility.UNSELECTED_APP;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    public final static String SETTINGS_CHANGED_KEY = "SETTINGS_CHANGED_KEY";
+
+    private final static String[] PROTOCOL_LIST = Collections.unmodifiableList(new ArrayList<String>() {{
+        for (NetUtility.PROTOCOL protocol :NetUtility.PROTOCOL.values()) {
+            add(protocol.name());
+        }
+    }}).toArray(new String[NetUtility.PROTOCOL.values().length]);
+
+    private int protocolIndex = 0;
     private SpManager spManager;
     private ImageView openAppImageView;
     private TextView openAppNameTextView;
     private Thread collectThread;
+
+    private boolean isChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +143,38 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        final TextView protocolTextView = findViewById(R.id.protocolTextView);
+        NetUtility.PROTOCOL openProtocol = NetUtility.PROTOCOL.findProtocol(spManager.getString(SpManager.STRING_KEY.OPEN_PROTOCOL));
+        protocolTextView.setText(openProtocol.name());
+        protocolIndex = openProtocol.ordinal();
+
+        Button chooseProtocolButton = findViewById(R.id.chooseProtocolButton);
+        chooseProtocolButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("Change Word")
+                        .setSingleChoiceItems(PROTOCOL_LIST, protocolIndex, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                protocolIndex = which;
+                            }
+                        })
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (-1 < protocolIndex && protocolIndex < PROTOCOL_LIST.length) {
+                                    spManager.putString(SpManager.STRING_KEY.OPEN_PROTOCOL, PROTOCOL_LIST[protocolIndex]);
+                                    protocolTextView.setText(PROTOCOL_LIST[protocolIndex]);
+                                    isChanged = true;
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+        });
     }
 
     private void saveSelectedApp(AppInfo appInfo) {
@@ -142,6 +188,7 @@ public class SettingsActivity extends AppCompatActivity {
         spManager.putString(SpManager.STRING_KEY.CLASS_NAME, className);
 
         setSelectedAppView(appName, packageName);
+        isChanged = true;
 
     }
 
@@ -170,7 +217,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        setIntent(getIntent().putExtra(SETTINGS_CHANGED_KEY, isChanged));
+        setResult(RESULT_OK, getIntent());
+        finish();
     }
 
     @Override

@@ -26,7 +26,7 @@ class SearcherUtility {
     }
 
     static URL makeThreadURL(String board, Integer id) throws MalformedURLException {
-        return new URL(NetUtility.PROTOCOL_HTTPS + board + RES_PATH + id + THREAD_EXT);
+        return new URL(NetUtility.PROTOCOL.HTTPS.value() + board + RES_PATH + id + THREAD_EXT);
     }
 
     static boolean checkBoard(String board) {
@@ -38,7 +38,7 @@ class SearcherUtility {
         Matcher hostMatcher = HOST_PATTERN.matcher(splitPath[0]);
         if (hostMatcher.find()) {
             try {
-                new URL(NetUtility.PROTOCOL_HTTPS + board);
+                new URL(NetUtility.PROTOCOL.HTTPS.value() + board);
                 return true;
             } catch (MalformedURLException e) {}
         }

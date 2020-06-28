@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">MMMSearch</string>
+    <string name="app_name">MMM Search</string>
+    <string name="title_activity_settings">Settings</string>
 </resources>
