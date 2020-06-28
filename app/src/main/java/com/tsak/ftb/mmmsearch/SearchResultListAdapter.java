@@ -81,12 +81,12 @@ class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
         final ImageView resultThreadImageView = convertView.findViewById(R.id.resultThreadImageView);
         if (threadImages.containsKey(threadInfoList.get(position))) {
             resultThreadImageView.setImageDrawable(threadImages.get(threadInfoList.get(position)));
+            notifyDataSetChanged();
         } else if (null != imageURL) {
             final Handler handler = new Handler();
             final View finalConvertView = convertView;
             if (!threadImageReadingMap.containsKey(imageURL)) {
                 threadImageReadingMap.put(imageURL, new AtomicBoolean(false));
-                notifyDataSetChanged();
             }
             try {
                 if (!threadImageReadingMap.get(imageURL).get()) {
@@ -160,6 +160,8 @@ class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
     public void clear() {
         super.clear();
         threadInfoList.clear();
+        threadImages.clear();
+        threadImageReadingMap.clear();
     }
 
     @Override
