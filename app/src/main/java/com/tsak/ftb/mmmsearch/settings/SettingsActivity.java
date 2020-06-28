@@ -44,6 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
     private SpManager spManager;
     private ImageView openAppImageView;
     private TextView openAppNameTextView;
+    private Button unSelectAppButton;
     private Thread collectThread;
 
     private boolean isChanged = false;
@@ -61,7 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
         openAppNameTextView = findViewById(R.id.openAppNameTextView);
 
 
-        Button unSelectAppButton = findViewById(R.id.unSelectAppButton);
+        unSelectAppButton = findViewById(R.id.unSelectAppButton);
         unSelectAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,6 +198,7 @@ public class SettingsActivity extends AppCompatActivity {
         if ("".equals(appName) && "".equals(packageName)) {
             openAppImageView.setImageDrawable(null);
             openAppNameTextView.setText(UNSELECTED_APP);
+            unSelectAppButton.setEnabled(false);
             return;
         }
         try {
@@ -204,6 +206,7 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
         }
         openAppNameTextView.setText(appName);
+        unSelectAppButton.setEnabled(true);
     }
 
     @Override
