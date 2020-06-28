@@ -25,6 +25,7 @@ public class AppUtility {
 
     public interface OnCollectListener {
         void onCollect(AppInfo appInfo);
+        void finish();
     }
 
     public static void collect(Context context, OnCollectListener onCollectListener) {
@@ -32,8 +33,10 @@ public class AppUtility {
         PackageManager pm = context.getPackageManager();
         final List<ApplicationInfo> installedAppList = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
+        boolean isInterrupted = false;
         for (ApplicationInfo installedApp : installedAppList) {
             if (Thread.interrupted()) {
+                isInterrupted = true;
                 break;
             }
             if (null != pm.getLaunchIntentForPackage(installedApp.packageName)) {
@@ -50,6 +53,9 @@ public class AppUtility {
                     } catch (PackageManager.NameNotFoundException ignored) {}
                 }
             }
+        }
+        if (!isInterrupted) {
+            onCollectListener.finish();
         }
     }
 }
