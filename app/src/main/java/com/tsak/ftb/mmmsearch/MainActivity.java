@@ -155,6 +155,11 @@ public class MainActivity extends AppCompatActivity {
                                 ClipData.newPlainText("", threadInfo.threadURL().toString()));
                         Toast.makeText(v.getContext(), "URL copied:" + threadInfo.threadURL().toString(), Toast.LENGTH_LONG).show();
                         break;
+                    case MAIL:
+                        clipboardManager.setPrimaryClip(
+                                ClipData.newPlainText("", threadInfo.mail()));
+                        Toast.makeText(v.getContext(), "Mail copied:" + threadInfo.mail(), Toast.LENGTH_LONG).show();
+                        break;
                     case TITLE:
                         clipboardManager.setPrimaryClip(
                                 ClipData.newPlainText("", threadInfo.titleEscapeHtml()));

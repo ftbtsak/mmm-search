@@ -32,6 +32,8 @@ public class ThreadSearcher {
     private final static String TITLE_END_SIGNATURE_2 = "<br>";
     private final static String TITLE_IP_BEGIN_SIGNATURE = "\\[<font color=\"#ff0000\">";
     private final static String TITLE_IP_END_SIGNATURE = "</font>\\]<br>";
+    private final static String MAIL_BEGIN_SIGNATURE = "<a href=\"mailto:";
+    private final static String MAIL_END_SIGNATURE = "\">";
 
     private List<String> boardList;
     private ThreadSearcherCallback callback;
@@ -64,12 +66,18 @@ public class ThreadSearcher {
                                 .replaceFirst(TITLE_END_SIGNATURE_1 + ".*", "")
                                 .replaceFirst(TITLE_END_SIGNATURE_2 + ".*", "");
                     }
-                    callback.notify(new ThreadInfo(threadURL, title));
+                    String mail = "";
+                    for (String line : lines) {
+                        if (line.contains(MAIL_BEGIN_SIGNATURE)) {
+                            mail = line
+                                    .replaceFirst(".*" + MAIL_BEGIN_SIGNATURE, "")
+                                    .replaceFirst(MAIL_END_SIGNATURE + ".*", "");
+                            break;
+                        }
+                    }
+                    callback.notify(new ThreadInfo(threadURL, title, mail));
                 } catch (NetUtility.NetUtilException e) {
-                    e.printStackTrace();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
+                } catch (MalformedURLException e) {}
             }
         }
     }

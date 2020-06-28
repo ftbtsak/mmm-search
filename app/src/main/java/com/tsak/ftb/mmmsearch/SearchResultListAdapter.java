@@ -24,6 +24,7 @@ class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
 
     public enum COLUMN {
         URL,
+        MAIL,
         TITLE,
         ALL,
         ;
@@ -61,6 +62,18 @@ class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
             @Override
             public boolean onLongClick(View v) {
                 itemListener.onLongClickItem(v, COLUMN.URL, threadInfoList.get(position));
+                return true;
+            }
+        });
+
+
+        final TextView resultThreadMailTextView = convertView.findViewById(R.id.resultThreadMailTextView);
+        resultThreadMailTextView.setText(threadInfoList.get(position).mail());
+        resultThreadMailTextView.setOnClickListener(allClickListener);
+        resultThreadMailTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                itemListener.onLongClickItem(v, COLUMN.MAIL, threadInfoList.get(position));
                 return true;
             }
         });

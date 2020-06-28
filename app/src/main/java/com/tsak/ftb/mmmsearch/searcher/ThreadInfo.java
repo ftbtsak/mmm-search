@@ -7,15 +7,15 @@ public class ThreadInfo {
 
     private URL url;
     private String title;
+    private String mail;
 
-    ThreadInfo(URL url, String title) {
+    ThreadInfo(URL url, String title, String mail) {
 
         try {
             this.url = new URL(url.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        } catch (MalformedURLException e) {}
         this.title = title;
+        this.mail = mail;
     }
 
     public URL threadURL() {
@@ -30,11 +30,15 @@ public class ThreadInfo {
         return SearcherUtility.replaceHtmlTag(title);
     }
 
+    public String mail() {
+        return mail;
+    }
+
     public String toString() {
         return "board:" + url + " title:" + title;
     }
 
     public ThreadInfo clone() {
-        return new ThreadInfo(url, title);
+        return new ThreadInfo(url, title, mail);
     }
 }
