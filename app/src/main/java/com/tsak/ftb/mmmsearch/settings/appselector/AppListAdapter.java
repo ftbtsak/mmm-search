@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,10 +24,9 @@ import java.util.List;
 public class AppListAdapter extends ArrayAdapter<AppInfo> {
     private LayoutInflater layoutInflater;
     private List<AppInfo> appList;
-    private AppSelectionListener appSelectionListener;
+    private int selectedIndex = -1;
 
-    private AppListAdapter(Context context, final List<AppInfo> appList,
-                           AppSelectionListener appSelectionListener) {
+    public AppListAdapter(Context context, final List<AppInfo> appList) {
         super(context, R.layout.app_list_item);
 
         this.layoutInflater = LayoutInflater.from(context);
@@ -35,7 +35,6 @@ public class AppListAdapter extends ArrayAdapter<AppInfo> {
                 add(appInfo);
             }
         }};
-        this.appSelectionListener = appSelectionListener;
     }
 
     @Override
@@ -54,6 +53,7 @@ public class AppListAdapter extends ArrayAdapter<AppInfo> {
     public void clear() {
         super.clear();
         appList.clear();
+        selectedIndex = -1;
     }
 
     @Override
@@ -95,32 +95,34 @@ public class AppListAdapter extends ArrayAdapter<AppInfo> {
         Collections.sort(appList, comparator);
     }
 
+    public void setChecked(int position) {
+        selectedIndex = position;
+        notifyDataSetChanged();
+    }
+
+    public void unChecked() {
+        selectedIndex = -1;
+        notifyDataSetChanged();
+    }
+
+    public AppInfo getCheckedItem() {
+        if (-1 < selectedIndex && selectedIndex <  appList.size()) {
+            return appList.get(selectedIndex);
+        }
+        return new AppInfo.AppInfoBuilder(null, null, null).build();
+    }
+
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         convertView = layoutInflater.inflate(R.layout.app_list_item, parent,false);
+
         final String labelName = appList.get(position).name();
-        final String packageName = appList.get(position).packageName();
-        final String className = appList.get(position).className();
         final Drawable appIcon = appList.get(position).icon();
+
         ((TextView) convertView.findViewById(R.id.appName)).setText(labelName);
         ((ImageView) convertView.findViewById(R.id.appIcon)).setImageDrawable(appIcon);
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(null != packageName && null != className && null != appSelectionListener) {
-                    appSelectionListener.onSelect(appList.get(position));
-                }
-            }
-        });
+        ((RadioButton) convertView.findViewById(R.id.appRadioButton)).setChecked(position == selectedIndex);
+
         return convertView;
-    }
-
-    public interface AppSelectionListener {
-        void onSelect(AppInfo appInfo);
-    }
-
-    public static AppListAdapter newInstance(Context context, List<AppInfo> appList,
-                                             AppSelectionListener appSelectionListener) {
-        return new AppListAdapter(context, appList, appSelectionListener);
     }
 }

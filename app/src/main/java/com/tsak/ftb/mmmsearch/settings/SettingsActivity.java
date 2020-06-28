@@ -2,11 +2,16 @@ package com.tsak.ftb.mmmsearch.settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -36,9 +41,11 @@ public class SettingsActivity extends AppCompatActivity {
         if (null != getSupportActionBar()) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
         spManager = SpManager.newInstance(this);
         openAppImageView = findViewById(R.id.openAppImageView);
         openAppNameTextView = findViewById(R.id.openAppNameTextView);
+
 
         Button unSelectAppButton = findViewById(R.id.unSelectAppButton);
         unSelectAppButton.setOnClickListener(new View.OnClickListener() {
@@ -47,47 +54,85 @@ public class SettingsActivity extends AppCompatActivity {
                 saveSelectedApp("", "", "");
             }
         });
+
         setSelectedAppView(spManager.getString(SpManager.STRING_KEY.APP_NAME),
                 spManager.getString(SpManager.STRING_KEY.PACKAGE_NAME));
 
-        final Handler handler = new Handler();
-        final ListView openAppListView = findViewById(R.id.openAppListView);
-        openAppListView.setFastScrollEnabled(true);
-        openAppListView.setFastScrollAlwaysVisible(false);
-        final AppListAdapter appListAdapter = AppListAdapter.newInstance(
-                getApplicationContext(), new ArrayList<AppInfo>(),
-                new AppListAdapter.AppSelectionListener() {
-                    @Override
-                    public void onSelect(AppInfo appInfo) {
-                        saveSelectedApp(appInfo.name(), appInfo.packageName(), appInfo.className());
-                    }
-                });
-        openAppListView.setAdapter(appListAdapter);
-
-        collectThread = new Thread(new Runnable() {
+        final View chooseAppView = LayoutInflater.from(this).inflate(R.layout.list_for_dialog, null);
+        ListView chooseAppListView = chooseAppView.findViewById(R.id.forDialogListView);
+        chooseAppListView.setFastScrollEnabled(true);
+        chooseAppListView.setFastScrollAlwaysVisible(false);
+        final AppListAdapter appListAdapter = new AppListAdapter(this, new ArrayList<AppInfo>());
+        chooseAppListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        chooseAppListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void run() {AppUtility.collect(getApplicationContext(),
-                    new AppUtility.OnCollectListener() {
-                        @Override
-                        public void onCollect(final AppInfo appInfo) {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    appListAdapter.add(appInfo);
-                                    appListAdapter.sort(new Comparator<AppInfo>() {
-                                        @Override
-                                        public int compare(AppInfo o1, AppInfo o2) {
-                                            return o1.name().compareToIgnoreCase(o2.name());
-                                        }
-                                    });
-                                    appListAdapter.notifyDataSetChanged();
-                                }
-                            });
-                        }
-                    });
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                appListAdapter.setChecked(position);
             }
         });
-        collectThread.start();
+        chooseAppListView.setAdapter(appListAdapter);
+
+        final AlertDialog chooseAppDialog = new AlertDialog.Builder(this)
+                .setTitle("Select Open App")
+                .setView(chooseAppView)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveSelectedApp(appListAdapter.getCheckedItem());
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (collectThread.isAlive()) {
+                            collectThread.interrupt();
+                        }
+                    }
+                })
+                .create();
+        Button chooseAppButton = findViewById(R.id.chooseAppButton);
+        chooseAppButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Handler handler = new Handler();
+                chooseAppDialog.show();
+                if (0 == appListAdapter.getCount()) {
+                    collectThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Comparator<AppInfo> appSorter = new Comparator<AppInfo>() {
+                                @Override
+                                public int compare(AppInfo o1, AppInfo o2) {
+                                    return o1.name().compareToIgnoreCase(o2.name());
+                                }
+                            };
+                            AppUtility.collect(getApplicationContext(),
+                                    new AppUtility.OnCollectListener() {
+                                        @Override
+                                        public void onCollect(final AppInfo appInfo) {
+                                            handler.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    appListAdapter.add(appInfo);
+                                                    appListAdapter.sort(appSorter);
+                                                    appListAdapter.notifyDataSetChanged();
+                                                }
+                                            });
+                                        }
+                                    });
+                        }
+                    });
+                    collectThread.start();
+                } else {
+                    appListAdapter.unChecked();
+                }
+            }
+        });
+    }
+
+    private void saveSelectedApp(AppInfo appInfo) {
+        saveSelectedApp(appInfo.name(), appInfo.packageName(), appInfo.className());
     }
 
     private void saveSelectedApp(String appName, String packageName, String className) {
@@ -126,8 +171,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
-        collectThread.interrupt();
     }
 
     @Override

@@ -12,7 +12,7 @@
         android:id="@+id/openAppLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open App"
+        android:text="Open App:"
         android:paddingTop="15dp"
         android:layout_margin="5dp"/>
 
@@ -43,13 +43,14 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:text="UnSelect"
-        android:layout_alignParentEnd="true" />
+        android:layout_toLeftOf="@id/chooseAppButton" />
 
-    <ListView
-        android:id="@+id/openAppListView"
+    <Button
+        android:id="@+id/chooseAppButton"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:layout_below="@id/openAppImageView"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="Choose"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

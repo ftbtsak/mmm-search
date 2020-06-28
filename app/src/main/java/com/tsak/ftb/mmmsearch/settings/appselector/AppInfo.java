@@ -35,10 +35,10 @@ public class AppInfo {
         return icon;
     }
 
-    public static class AppInfoBuilder {
+    static class AppInfoBuilder {
         private AppInfo appInfo = new AppInfo();
 
-        public AppInfoBuilder(String name, String packageName, String className) {
+        AppInfoBuilder(String name, String packageName, String className) {
             if (null != name) {
                 appInfo.name = name;
             }
@@ -50,14 +50,14 @@ public class AppInfo {
             }
         }
 
-        public AppInfoBuilder setIcon(Drawable icon) {
+        AppInfoBuilder setIcon(Drawable icon) {
             if (null != icon) {
                 appInfo.icon = icon.mutate();
             }
             return this;
         }
 
-        public AppInfo build() {
+        AppInfo build() {
             return appInfo.clone();
         }
     }

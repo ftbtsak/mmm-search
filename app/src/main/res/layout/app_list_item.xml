@@ -3,19 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="5dp">
 
-    <TextView
-        android:id="@+id/appName"
-        android:layout_width="match_parent"
+    <RadioButton
+        android:id="@+id/appRadioButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="name" />
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:layout_marginTop="10dp"
+        android:padding="5dp"/>
 
     <ImageView
         android:id="@+id/appIcon"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:padding="5dp"
         app:srcCompat="@android:color/transparent" />
+
+    <TextView
+        android:id="@+id/appName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="name" />
 
 </LinearLayout>

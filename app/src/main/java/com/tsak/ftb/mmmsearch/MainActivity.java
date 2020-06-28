@@ -219,8 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isSearching) {
                     searchResultListAdapter.clear();
                 } else {
-                    String finishMsg = "Search finished.";
-                    Toast.makeText(getApplicationContext(), finishMsg, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Search finished.", Toast.LENGTH_LONG).show();
                 }
                 changeWordButton.setEnabled(!isSearching);
                 searchButton.setEnabled(!isSearching);

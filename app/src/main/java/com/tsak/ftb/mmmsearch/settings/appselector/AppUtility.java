@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AppUtility {
 
-    public final static String UNSELECTED_APP = "未選択";
+    public final static String UNSELECTED_APP = "nothing";
 
     private AppUtility() {
         throw new AssertionError();
@@ -33,6 +33,9 @@ public class AppUtility {
         final List<ApplicationInfo> installedAppList = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
         for (ApplicationInfo installedApp : installedAppList) {
+            if (Thread.interrupted()) {
+                break;
+            }
             if (null != pm.getLaunchIntentForPackage(installedApp.packageName)) {
                 String labelName = pm.getApplicationLabel(installedApp).toString();
                 String packageName = installedApp.packageName;
