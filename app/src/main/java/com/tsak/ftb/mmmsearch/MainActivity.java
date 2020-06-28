@@ -3,8 +3,12 @@ package com.tsak.ftb.mmmsearch;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -18,6 +22,8 @@ import android.widget.Toast;
 import com.tsak.ftb.mmmsearch.searcher.ThreadInfo;
 import com.tsak.ftb.mmmsearch.searcher.ThreadSearcher;
 import com.tsak.ftb.mmmsearch.settings.SettingsActivity;
+import com.tsak.ftb.mmmsearch.settings.appselector.SpManager;
+import com.tsak.ftb.mmmsearch.utility.NetUtility;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<String> boards = Collections.unmodifiableList(
             Collections.singletonList("may.2chan.net/b"));
 
+    private SpManager spManager;
     private int wordIndex = 0;
     private AtomicBoolean isSearching = new AtomicBoolean(false);
 
@@ -44,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        spManager = SpManager.newInstance(this);
+        wordIndex = spManager.getInt(SpManager.INT_KEY.SEARCH_WORD_INDEX);
         targetWordTextView = findViewById(R.id.targetWordTextView);
         targetWordTextView.setText(TARGET_WORDS[wordIndex]);
 
@@ -63,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (-1 < wordIndex && wordIndex < TARGET_WORDS.length) {
+                                    spManager.putInt(SpManager.INT_KEY.SEARCH_WORD_INDEX, wordIndex);
                                     targetWordTextView.setText(TARGET_WORDS[wordIndex]);
                                 }
                             }
@@ -109,7 +120,48 @@ public class MainActivity extends AppCompatActivity {
         });
 
         searchResultListView = findViewById(R.id.searchResultListView);
-        searchResultListAdapter = new SearchResultListAdapter(this);
+        searchResultListAdapter = new SearchResultListAdapter(this, new SearchResultListAdapter.ItemListener() {
+            @Override
+            public void onClickItem(View v, SearchResultListAdapter.COLUMN column, ThreadInfo threadInfo) {
+                switch (column) {
+                    case ALL:
+                        Intent intent = new Intent();
+                        Uri uri = Uri.parse(threadInfo.threadURL().toString().replaceFirst(NetUtility.PROTOCOL_HTTPS, NetUtility.PROTOCOL_HTTP));
+                        if (!"".equals(spManager.getString(SpManager.STRING_KEY.APP_NAME))) {
+                            intent.setClassName(spManager.getString(SpManager.STRING_KEY.PACKAGE_NAME),
+                                    spManager.getString(SpManager.STRING_KEY.CLASS_NAME));
+                            intent.setData(uri);
+                        } else {
+                            intent = new Intent(Intent.ACTION_VIEW, uri);
+                        }
+                        startActivity(intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onLongClickItem(View v, SearchResultListAdapter.COLUMN column, ThreadInfo threadInfo) {
+                if (null == clipboardManager) {
+                    return;
+                }
+                switch (column) {
+                    case URL:
+                        clipboardManager.setPrimaryClip(
+                                ClipData.newPlainText("", threadInfo.threadURL().toString()));
+                        Toast.makeText(v.getContext(), "URL copied:" + threadInfo.threadURL().toString(), Toast.LENGTH_LONG).show();
+                        break;
+                    case TITLE:
+                        clipboardManager.setPrimaryClip(
+                                ClipData.newPlainText("", threadInfo.titleEscapeHtml()));
+                        Toast.makeText(v.getContext(), "Title copied:" + threadInfo.titleEscapeHtml(), Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
         searchResultListView.setAdapter(searchResultListAdapter);
     }
 

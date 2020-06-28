@@ -26,6 +26,7 @@ public class NetUtility {
         ;
     }
 
+    public final static String PROTOCOL_HTTP = "http://";
     public final static String PROTOCOL_HTTPS = "https://";
     public final static String PATH_SEPARATOR = "/";
     public final static String DEFAULT_ENCODING = "SHIFT_JIS";

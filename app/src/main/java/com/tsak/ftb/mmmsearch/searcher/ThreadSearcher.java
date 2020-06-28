@@ -111,18 +111,20 @@ public class ThreadSearcher {
                 while(keys.hasNext()) {
                     Object obj = keys.next();
                     if (obj instanceof String) {
-                        Integer res = Integer.valueOf((String) obj);
-                        Integer resTo = JsonUtility.getInteger(jsonObject, -1, obj, RESTO_KEY);
-                        String com = JsonUtility.getString(jsonObject, "", obj, COM_KEY);
-                        if (0 <= resTo && !"".equals(com)) {
-                            Integer parentId = resTo;
-                            if (0 == resTo) {
-                                parentId = res;
+                        try {
+                            Integer res = Integer.valueOf((String) obj);
+                            Integer resTo = JsonUtility.getInteger(jsonObject, -1, obj, RESTO_KEY);
+                            String com = JsonUtility.getString(jsonObject, "", obj, COM_KEY);
+                            if (0 <= resTo && !"".equals(com)) {
+                                Integer parentId = resTo;
+                                if (0 == resTo) {
+                                    parentId = res;
+                                }
+                                if (!idList.contains(parentId)) {
+                                    idList.add(parentId);
+                                }
                             }
-                            if (!idList.contains(parentId)) {
-                                idList.add(parentId);
-                            }
-                        }
+                        } catch (NumberFormatException e) {}
                     }
                 }
             } catch (JSONException e) {}

@@ -1,11 +1,14 @@
 package com.tsak.ftb.mmmsearch;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,25 +22,59 @@ import java.util.List;
 
 class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
 
+    public enum COLUMN {
+        URL,
+        TITLE,
+        ALL,
+        ;
+    }
+
     private LayoutInflater layoutInflater;
     private List<ThreadInfo> threadInfoList;
+    private ItemListener itemListener;
 
-    SearchResultListAdapter(@NonNull Context context) {
+    SearchResultListAdapter(@NonNull Context context, ItemListener itemListener) {
         super(context, R.layout.result_list_item);
 
         this.layoutInflater = LayoutInflater.from(context);
         this.threadInfoList = new ArrayList<>();
+        this.itemListener = itemListener;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         convertView = layoutInflater.inflate(R.layout.result_list_item, parent,false);
 
-        TextView resultThreadURLTextView = convertView.findViewById(R.id.resultThreadURLTextView);
-        resultThreadURLTextView.setText(threadInfoList.get(position).threadURL().toString());
+        View.OnClickListener allClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemListener.onClickItem(v, COLUMN.ALL, threadInfoList.get(position));
+            }
+        };
 
-        TextView resultThreadTitleTextView = convertView.findViewById(R.id.resultThreadTitleTextView);
+        convertView.setOnClickListener(allClickListener);
+
+        final TextView resultThreadURLTextView = convertView.findViewById(R.id.resultThreadURLTextView);
+        resultThreadURLTextView.setText(threadInfoList.get(position).threadURL().toString());
+        resultThreadURLTextView.setOnClickListener(allClickListener);
+        resultThreadURLTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                itemListener.onLongClickItem(v, COLUMN.URL, threadInfoList.get(position));
+                return true;
+            }
+        });
+
+        final TextView resultThreadTitleTextView = convertView.findViewById(R.id.resultThreadTitleTextView);
         resultThreadTitleTextView.setText(String.valueOf(threadInfoList.get(position).titleEscapeHtml()));
+        resultThreadTitleTextView.setOnClickListener(allClickListener);
+        resultThreadTitleTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                itemListener.onLongClickItem(v, COLUMN.TITLE, threadInfoList.get(position));
+                return true;
+            }
+        });
 
         return convertView;
     }
@@ -90,6 +127,11 @@ class SearchResultListAdapter extends ArrayAdapter<ThreadInfo> {
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    public interface ItemListener {
+        void onClickItem(View v, COLUMN column, ThreadInfo threadInfo);
+        void onLongClickItem(View v, COLUMN column, ThreadInfo threadInfo);
     }
 
 }

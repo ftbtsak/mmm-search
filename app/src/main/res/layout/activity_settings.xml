@@ -1,80 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".settings.SettingsActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:layout_margin="10dp">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/openAppLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open App"
+        android:paddingTop="15dp"
+        android:layout_margin="5dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="10dp"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true"
-            android:id="@+id/settingsLayout">
+    <TextView
+        android:id="@+id/openAppNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:paddingTop="10dp"
+        android:layout_toEndOf="@id/openAppLabel"
+        android:layout_toStartOf="@id/unSelectAppButton"
+        android:text="loading..."
+        android:gravity="center"/>
 
-            <RelativeLayout android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context=".AppSelectionActivity">
+    <ImageView
+        android:id="@+id/openAppImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        app:srcCompat="@android:color/transparent"
+        android:layout_toEndOf="@id/openAppLabel"
+        android:layout_toStartOf="@id/unSelectAppButton"
+        android:layout_below="@id/openAppNameTextView"/>
 
-                <TextView
-                    android:id="@+id/openAppLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Open App"
-                    android:paddingTop="15dp"
-                    android:layout_margin="5dp"/>
+    <Button
+        android:id="@+id/unSelectAppButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="UnSelect"
+        android:layout_alignParentEnd="true" />
 
-                <TextView
-                    android:id="@+id/openAppNameTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:paddingTop="10dp"
-                    android:layout_toEndOf="@id/openAppLabel"
-                    android:layout_toStartOf="@id/unSelectAppButton"
-                    android:text="loading..."
-                    android:gravity="center"/>
+    <ListView
+        android:id="@+id/openAppListView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:layout_below="@id/openAppImageView"/>
 
-                <ImageView
-                    android:id="@+id/openAppImageView"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    app:srcCompat="@android:color/transparent"
-                    android:layout_toEndOf="@id/openAppLabel"
-                    android:layout_toStartOf="@id/unSelectAppButton"
-                    android:layout_below="@id/openAppNameTextView"/>
-
-                <Button
-                    android:id="@+id/unSelectAppButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="UnSelect"
-                    android:layout_above="@id/openAppListView"
-                    android:layout_alignParentEnd="true" />
-
-                <ListView
-                    android:id="@+id/openAppListView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:layout_below="@id/openAppImageView"/>
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-    </ScrollView>
-
-</LinearLayout>
+</RelativeLayout>
