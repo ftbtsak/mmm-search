@@ -74,8 +74,10 @@ public class SettingsActivity extends AppCompatActivity {
         setSelectedAppView(spManager.getString(SpManager.STRING_KEY.APP_NAME),
                 spManager.getString(SpManager.STRING_KEY.PACKAGE_NAME));
 
+        final AtomicBoolean isFinishCollect = new AtomicBoolean(false);
+
         final View chooseAppView = LayoutInflater.from(this).inflate(R.layout.list_for_dialog, null);
-        final ListView chooseAppListView = chooseAppView.findViewById(R.id.forDialogListView);
+        ListView chooseAppListView = chooseAppView.findViewById(R.id.forDialogListView);
         chooseAppListView.setFastScrollEnabled(true);
         chooseAppListView.setFastScrollAlwaysVisible(false);
         final AppListAdapter appListAdapter = new AppListAdapter(this, new ArrayList<AppInfo>());
@@ -83,11 +85,12 @@ public class SettingsActivity extends AppCompatActivity {
         chooseAppListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                appListAdapter.setChecked(position);
+                if (isFinishCollect.get()) {
+                    appListAdapter.setChecked(position);
+                }
             }
         });
         chooseAppListView.setAdapter(appListAdapter);
-        chooseAppListView.setEnabled(false);
 
         final AlertDialog chooseAppDialog = new AlertDialog.Builder(this)
                 .setTitle("Select Open App")
@@ -109,7 +112,6 @@ public class SettingsActivity extends AppCompatActivity {
                 })
                 .create();
 
-        final AtomicBoolean isFinishCollect = new AtomicBoolean(false);
         Button chooseAppButton = findViewById(R.id.chooseAppButton);
         chooseAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +119,6 @@ public class SettingsActivity extends AppCompatActivity {
                 final Handler handler = new Handler();
                 chooseAppDialog.show();
                 if (!isFinishCollect.get()) {
-                    appListAdapter.clear();
                     collectThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -134,9 +135,10 @@ public class SettingsActivity extends AppCompatActivity {
                                             handler.post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    appListAdapter.add(appInfo);
-                                                    appListAdapter.sort(appSorter);
-                                                    appListAdapter.notifyDataSetChanged();
+                                                    if (appListAdapter.addNonDup(appInfo)) {
+                                                        appListAdapter.sort(appSorter);
+                                                        appListAdapter.notifyDataSetChanged();
+                                                    }
                                                 }
                                             });
                                         }
@@ -150,7 +152,6 @@ public class SettingsActivity extends AppCompatActivity {
                                                     appListAdapter.setChecked(spManager.getString(SpManager.STRING_KEY.APP_NAME),
                                                             spManager.getString(SpManager.STRING_KEY.PACKAGE_NAME),
                                                             spManager.getString(SpManager.STRING_KEY.CLASS_NAME));
-                                                    chooseAppListView.setEnabled(true);
                                                 }
                                             });
                                         }

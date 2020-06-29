@@ -43,6 +43,15 @@ public class AppListAdapter extends ArrayAdapter<AppInfo> {
         appList.add(object);
     }
 
+    public boolean addNonDup(@Nullable AppInfo object) {
+        if (!appList.contains(object)) {
+            super.add(object);
+            appList.add(object);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void addAll(AppInfo... items) {
         super.addAll(items);
