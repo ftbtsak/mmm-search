@@ -1,49 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
     android:id="@+id/mainLayout">
 
-    <TextView
-        android:id="@+id/targetWordLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="Target Word:" />
-
-    <TextView
-        android:id="@+id/targetWordTextView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_toEndOf="@id/targetWordLabel"
-        android:layout_toStartOf="@id/changeWordButton"
-        android:text="loading..."/>
+        android:orientation="horizontal"
+        android:weightSum="1">
 
-    <Button
-        android:id="@+id/changeWordButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="Change"
-        android:layout_toLeftOf="@id/searchButton" />
+        <TextView
+            android:id="@+id/targetWordLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Target Word:" />
 
-    <Button
-        android:id="@+id/searchButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="Search"
-        android:layout_alignParentEnd="true" />
+        <TextView
+            android:id="@+id/targetWordTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="loading..."/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/changeWordButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Change" />
+
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Search" />
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/searchResultListView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_below="@id/searchButton"/>
-</RelativeLayout>
+        android:layout_margin="8dp"/>
+
+</LinearLayout>

@@ -22,6 +22,7 @@ import com.tsak.ftb.mmmsearch.settings.appselector.AppInfo;
 import com.tsak.ftb.mmmsearch.settings.appselector.AppListAdapter;
 import com.tsak.ftb.mmmsearch.settings.appselector.AppUtility;
 import com.tsak.ftb.mmmsearch.utility.NetUtility;
+import com.tsak.ftb.mmmsearch.utility.StringUtility;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +36,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     public final static String SETTINGS_CHANGED_KEY = "SETTINGS_CHANGED_KEY";
 
+    private final static int MAX_VIEW_APP_NAME_BYTE = 12;
     private final static String[] PROTOCOL_LIST = Collections.unmodifiableList(new ArrayList<String>() {{
         for (NetUtility.PROTOCOL protocol :NetUtility.PROTOCOL.values()) {
             add(protocol.name());
@@ -98,7 +100,9 @@ public class SettingsActivity extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        saveSelectedApp(appListAdapter.getCheckedItem());
+                        if (isFinishCollect.get()) {
+                            saveSelectedApp(appListAdapter.getCheckedItem());
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -226,7 +230,7 @@ public class SettingsActivity extends AppCompatActivity {
             openAppImageView.setImageDrawable(AppUtility.getApplicationIcon(this, packageName));
         } catch (PackageManager.NameNotFoundException e) {
         }
-        openAppNameTextView.setText(appName);
+        openAppNameTextView.setText(StringUtility.substringByByteLen(appName, MAX_VIEW_APP_NAME_BYTE));
         unSelectAppButton.setEnabled(true);
     }
 
