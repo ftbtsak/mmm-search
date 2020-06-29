@@ -1,6 +1,7 @@
 package com.tsak.ftb.mmmsearch.settings;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -13,6 +14,7 @@ public class SpManager {
 
     public enum INT_KEY {
         SEARCH_WORD_INDEX(DEFAULT_INT),
+        OPEN_APP_FLAG(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK),
         ;
 
         private int defaultValue;
