@@ -85,7 +85,40 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    public enum BOARD {
+        may("may.2chan.net/b"),
+        img("img.2chan.net/b"),
+        V("dec.2chan.net/73"),
+        ;
+
+        private String value;
+
+        public String value() {
+            return value;
+        }
+
+        BOARD(String value) {
+            this.value = value;
+        }
+
+        public static BOARD findBoard(String target) {
+
+            for (BOARD board : BOARD.values()) {
+                if (board.name().equals(target)) {
+                    return board;
+                }
+            }
+            return may;
+        }
+    }
+    private final static String[] BOARD_LIST = Collections.unmodifiableList(new ArrayList<String>() {{
+        for (BOARD board :BOARD.values()) {
+            add(board.name());
+        }
+    }}).toArray(new String[BOARD.values().length]);
+
     private int protocolIndex = 0;
+    private int boardIndex = 0;
     private SpManager spManager;
     private ImageView openAppImageView;
     private TextView openAppNameTextView;
@@ -222,18 +255,20 @@ public class SettingsActivity extends AppCompatActivity {
         chooseProtocolButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final AtomicInteger index = new AtomicInteger(protocolIndex);
                 new AlertDialog.Builder(SettingsActivity.this)
                         .setTitle("Change Word")
                         .setSingleChoiceItems(PROTOCOL_LIST, protocolIndex, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                protocolIndex = which;
+                                index.set(which);
                             }
                         })
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (-1 < protocolIndex && protocolIndex < PROTOCOL_LIST.length) {
+                                if (-1 < index.get() && index.get() < PROTOCOL_LIST.length) {
+                                    protocolIndex = index.get();
                                     spManager.putString(SpManager.STRING_KEY.OPEN_PROTOCOL, PROTOCOL_LIST[protocolIndex]);
                                     protocolTextView.setText(PROTOCOL_LIST[protocolIndex]);
                                     isChanged = true;
@@ -310,6 +345,40 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 });
                 openFlagDialog.show();
+            }
+        });
+
+        final TextView openBoardTextView = findViewById(R.id.openBoardTextView);
+        BOARD board = BOARD.findBoard(spManager.getString(SpManager.STRING_KEY.SEARCH_BOARD));
+        openBoardTextView.setText(board.name());
+        boardIndex = board.ordinal();
+
+        Button chooseBoardButton = findViewById(R.id.chooseBoardButton);
+        chooseBoardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AtomicInteger index = new AtomicInteger(boardIndex);
+                new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("Change Board")
+                        .setSingleChoiceItems(BOARD_LIST, boardIndex, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                index.set(which);
+                            }
+                        })
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (-1 < index.get() && index.get() < BOARD_LIST.length) {
+                                    boardIndex = index.get();
+                                    spManager.putString(SpManager.STRING_KEY.SEARCH_BOARD, BOARD_LIST[boardIndex]);
+                                    openBoardTextView.setText(BOARD_LIST[boardIndex]);
+                                    isChanged = true;
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             }
         });
     }

@@ -25,6 +25,7 @@ import com.tsak.ftb.mmmsearch.settings.SettingsActivity;
 import com.tsak.ftb.mmmsearch.settings.SpManager;
 import com.tsak.ftb.mmmsearch.utility.NetUtility;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,14 +33,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MainActivity extends AppCompatActivity {
 
     private final static int SETTINGS_REQ_CODE = 810;
-    private final String[] TARGET_WORDS = {"めめめ", "MMM"};
-    private final List<String> boards = Collections.unmodifiableList(
-            Collections.singletonList("may.2chan.net/b"));
+    private final static String[] TARGET_WORDS = {"めめめ", "MMM"};
 
     private SpManager spManager;
     private int wordIndex = 0;
     private NetUtility.PROTOCOL openProtocol;
     private int openFlag;
+    private String board;
     private AtomicBoolean isSearching = new AtomicBoolean(false);
 
     private TextView targetWordTextView;
@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         spManager = SpManager.newInstance(this);
         openFlag = spManager.getInt(SpManager.INT_KEY.OPEN_APP_FLAG);
         wordIndex = spManager.getInt(SpManager.INT_KEY.SEARCH_WORD_INDEX);
+        board = SettingsActivity.BOARD.findBoard(spManager.getString(SpManager.STRING_KEY.SEARCH_BOARD)).value();
         targetWordTextView = findViewById(R.id.targetWordTextView);
         targetWordTextView.setText(TARGET_WORDS[wordIndex]);
 
@@ -98,10 +99,12 @@ public class MainActivity extends AppCompatActivity {
                         Thread searcherThread = new Thread() {
                             @Override
                             public void run() {
-                                ThreadSearcher.newInstance(boards, new ThreadSearcher.ThreadSearcherCallback() {
-                                    @Override
-                                    public void notify(final ThreadInfo threadInfo) {
-                                        handler.post(new Runnable() {
+                                ThreadSearcher.newInstance(
+                                        Collections.singletonList(board),
+                                        new ThreadSearcher.ThreadSearcherCallback() {
+                                            @Override
+                                            public void notify(final ThreadInfo threadInfo) {
+                                                handler.post(new Runnable() {
                                             @Override
                                             public void run() {
                                                 searchResultListAdapter.add(threadInfo);
@@ -225,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
                 if (null != data && data.getBooleanExtra(SettingsActivity.SETTINGS_CHANGED_KEY, false)) {
                     openProtocol = NetUtility.PROTOCOL.findProtocol(spManager.getString(SpManager.STRING_KEY.OPEN_PROTOCOL));
                     openFlag = spManager.getInt(SpManager.INT_KEY.OPEN_APP_FLAG);
+                    board = SettingsActivity.BOARD.findBoard(spManager.getString(SpManager.STRING_KEY.SEARCH_BOARD)).value();
                 }
                 break;
             default:

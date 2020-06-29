@@ -33,6 +33,7 @@ public class SpManager {
         PACKAGE_NAME(DEFAULT_STRING),
         CLASS_NAME(DEFAULT_STRING),
         OPEN_PROTOCOL(DEFAULT_STRING),
+        SEARCH_BOARD(DEFAULT_STRING),
         ;
 
         private String defaultValue;
