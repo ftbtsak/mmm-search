@@ -156,19 +156,25 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(v.getContext(), "URL copied:" + threadInfo.threadURL().toString(), Toast.LENGTH_LONG).show();
                         break;
                     case IMAGE:
-                        clipboardManager.setPrimaryClip(
-                                ClipData.newPlainText("", threadInfo.imgUrl().toString()));
-                        Toast.makeText(v.getContext(), "Image URL copied:" + threadInfo.imgUrl(), Toast.LENGTH_LONG).show();
+                        if (null != threadInfo.imgUrl()) {
+                            clipboardManager.setPrimaryClip(
+                                    ClipData.newPlainText("", threadInfo.imgUrl().toString()));
+                            Toast.makeText(v.getContext(), "Image URL copied:" + threadInfo.imgUrl(), Toast.LENGTH_LONG).show();
+                        }
                         break;
                     case MAIL:
-                        clipboardManager.setPrimaryClip(
-                                ClipData.newPlainText("", threadInfo.mail()));
-                        Toast.makeText(v.getContext(), "Mail copied:" + threadInfo.mail(), Toast.LENGTH_LONG).show();
+                        if (!"".equals(threadInfo.mail())) {
+                            clipboardManager.setPrimaryClip(
+                                    ClipData.newPlainText("", threadInfo.mail()));
+                            Toast.makeText(v.getContext(), "Mail copied:" + threadInfo.mail(), Toast.LENGTH_LONG).show();
+                        }
                         break;
                     case TITLE:
-                        clipboardManager.setPrimaryClip(
-                                ClipData.newPlainText("", threadInfo.titleEscapeHtml()));
-                        Toast.makeText(v.getContext(), "Title copied:" + threadInfo.titleEscapeHtml(), Toast.LENGTH_LONG).show();
+                        if (!"".equals(threadInfo.titleEscapeHtml())) {
+                            clipboardManager.setPrimaryClip(
+                                    ClipData.newPlainText("", threadInfo.titleEscapeHtml()));
+                            Toast.makeText(v.getContext(), "Title copied:" + threadInfo.titleEscapeHtml(), Toast.LENGTH_LONG).show();
+                        }
                         break;
                     default:
                         break;
