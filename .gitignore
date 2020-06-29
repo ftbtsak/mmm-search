@@ -44,6 +44,7 @@ captures/
 .idea/libraries
 .idea/runConfigurations.xml
 .idea/caches/*
+.idea/jarRepositories.xml
 
 # Keystore files
 *.jks

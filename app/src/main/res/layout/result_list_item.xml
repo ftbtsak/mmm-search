@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/resultThreadURLTextView"
         android:layout_width="0dp"
-        android:layout_weight="0.4"
+        android:layout_weight="4"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="15dp"
@@ -19,7 +19,7 @@
     <ImageView
         android:id="@+id/resultThreadImageView"
         android:layout_width="0dp"
-        android:layout_weight="0.1"
+        android:layout_weight="1"
         android:layout_height="40dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
@@ -32,7 +32,7 @@
     <TextView
         android:id="@+id/resultThreadMailTextView"
         android:layout_width="0dp"
-        android:layout_weight="0.2"
+        android:layout_weight="2"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="15dp"
@@ -44,7 +44,7 @@
     <TextView
         android:id="@+id/resultThreadTitleTextView"
         android:layout_width="0dp"
-        android:layout_weight="0.3"
+        android:layout_weight="3"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"

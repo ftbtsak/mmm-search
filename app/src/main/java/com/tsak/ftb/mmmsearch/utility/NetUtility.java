@@ -61,6 +61,10 @@ public class NetUtility {
 
     private final static int TIMEOUT_MS = 60000;
 
+    private NetUtility() {
+        throw new AssertionError();
+    }
+
     public static String readHtml(URL url) throws NetUtilException {
 
         List<String> lines = NetUtility.readHtmlLines(url, FIND_REGEX.NOTHING, "");
