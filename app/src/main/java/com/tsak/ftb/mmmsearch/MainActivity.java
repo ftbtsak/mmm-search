@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private SpManager spManager;
     private int wordIndex = 0;
     private NetUtility.PROTOCOL openProtocol;
+    private int openFlag;
     private AtomicBoolean isSearching = new AtomicBoolean(false);
 
     private TextView targetWordTextView;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         spManager = SpManager.newInstance(this);
+        openFlag = spManager.getInt(SpManager.INT_KEY.OPEN_APP_FLAG);
         wordIndex = spManager.getInt(SpManager.INT_KEY.SEARCH_WORD_INDEX);
         targetWordTextView = findViewById(R.id.targetWordTextView);
         targetWordTextView.setText(TARGET_WORDS[wordIndex]);
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             intent = new Intent(Intent.ACTION_VIEW, uri);
                         }
-                        startActivity(intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+                        startActivity(intent.setFlags(openFlag));
                         break;
                     default:
                         break;
@@ -222,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
             case SETTINGS_REQ_CODE:
                 if (null != data && data.getBooleanExtra(SettingsActivity.SETTINGS_CHANGED_KEY, false)) {
                     openProtocol = NetUtility.PROTOCOL.findProtocol(spManager.getString(SpManager.STRING_KEY.OPEN_PROTOCOL));
+                    openFlag = spManager.getInt(SpManager.INT_KEY.OPEN_APP_FLAG);
                 }
                 break;
             default:
