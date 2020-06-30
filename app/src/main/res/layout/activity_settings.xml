@@ -22,16 +22,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginTop="5dp"
                 android:weightSum="1">
 
                 <TextView
                     android:id="@+id/openAppLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Open App:"
-                    android:layout_margin="5dp"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_horizontal"/>
+                    android:gravity="center_horizontal"
+                    android:text="Open App: "/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -42,16 +42,14 @@
                         android:id="@+id/openAppNameTextView"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:text="loading..."
                         android:layout_gravity="center_vertical"
-                        android:gravity="center_horizontal"/>
+                        android:gravity="center_horizontal"
+                        android:text="loading..."/>
 
                     <ImageView
                         android:id="@+id/openAppImageView"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_margin="5dp"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_horizontal"
                         app:srcCompat="@android:color/transparent"/>
@@ -67,17 +65,15 @@
                     android:id="@+id/unSelectAppButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
                     android:layout_gravity="center_vertical"
-                    android:text="UnSelect" />
+                    android:text="UnSelect"/>
 
                 <Button
                     android:id="@+id/chooseAppButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
                     android:layout_gravity="center_vertical"
-                    android:text="Choose" />
+                    android:text="Choose"/>
 
             </LinearLayout>
 
@@ -85,25 +81,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginTop="5dp"
                 android:weightSum="1">
 
                 <TextView
                     android:id="@+id/openFlagLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="Open App Flag:"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_horizontal"/>
+                    android:gravity="center_horizontal"
+                    android:text="Open App Flag: "/>
 
                 <TextView
                     android:id="@+id/openFlagTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="loading..."
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_horizontal"/>
+                    android:gravity="center_horizontal"
+                    android:text="loading..."/>
 
                 <View
                     android:layout_width="0dp"
@@ -114,9 +109,8 @@
                     android:id="@+id/openFlagButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
                     android:layout_gravity="center_vertical"
-                    android:text="Choose" />
+                    android:text="Choose"/>
 
             </LinearLayout>
 
@@ -124,24 +118,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginTop="5dp"
                 android:weightSum="1">
 
                 <TextView
                     android:id="@+id/protocolLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="Open Protocol:"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_horizontal"/>
+                    android:gravity="center_horizontal"
+                    android:text="Open Protocol: "/>
 
                 <TextView
                     android:id="@+id/protocolTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="loading..."
-                    android:layout_gravity="center_vertical"/>
+                    android:layout_gravity="center_vertical"
+                    android:text="loading..."/>
 
                 <View
                     android:layout_width="0dp"
@@ -152,9 +145,8 @@
                     android:id="@+id/chooseProtocolButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
                     android:layout_gravity="center_vertical"
-                    android:text="Choose" />
+                    android:text="Choose"/>
 
             </LinearLayout>
 
@@ -162,24 +154,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginTop="5dp"
                 android:weightSum="1">
 
                 <TextView
                     android:id="@+id/openBoardLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="Target Board:"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_horizontal"/>
+                    android:gravity="center_horizontal"
+                    android:text="Target Board: "/>
 
                 <TextView
                     android:id="@+id/openBoardTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="loading..."
-                    android:layout_gravity="center_vertical"/>
+                    android:layout_gravity="center_vertical"
+                    android:text="loading..."/>
 
                 <View
                     android:layout_width="0dp"
@@ -190,9 +181,8 @@
                     android:id="@+id/chooseBoardButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
                     android:layout_gravity="center_vertical"
-                    android:text="Choose" />
+                    android:text="Choose"/>
 
             </LinearLayout>
 

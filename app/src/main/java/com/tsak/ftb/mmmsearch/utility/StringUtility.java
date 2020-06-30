@@ -25,4 +25,8 @@ public class StringUtility {
         }
         return target;
     }
+
+    public static String toHexString(int target) {
+        return "0x" + String.format("%08x", target).toUpperCase();
+    }
 }

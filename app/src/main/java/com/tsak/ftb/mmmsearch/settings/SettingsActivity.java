@@ -26,9 +26,10 @@ import com.tsak.ftb.mmmsearch.utility.NetUtility;
 import com.tsak.ftb.mmmsearch.utility.StringUtility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,11 +40,6 @@ public class SettingsActivity extends AppCompatActivity {
     public final static String SETTINGS_CHANGED_KEY = "SETTINGS_CHANGED_KEY";
 
     private final static int MAX_VIEW_APP_NAME_BYTE = 12;
-    private final static String[] PROTOCOL_LIST = Collections.unmodifiableList(new ArrayList<String>() {{
-        for (NetUtility.PROTOCOL protocol :NetUtility.PROTOCOL.values()) {
-            add(protocol.name());
-        }
-    }}).toArray(new String[NetUtility.PROTOCOL.values().length]);
 
     private enum OPEN_FLAG {
         FLAG_ACTIVITY_BROUGHT_TO_FRONT(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT),
@@ -65,24 +61,44 @@ public class SettingsActivity extends AppCompatActivity {
         ;
 
         private int value;
-        private static int defaultValue = SpManager.INT_KEY.OPEN_APP_FLAG.defaultValue();
-
-        private boolean isDefaultValue() {
-            return 0 != (OPEN_FLAG.defaultValue & value);
-        }
 
         OPEN_FLAG(int value) {
             this.value = value;
         }
 
-        static OPEN_FLAG indexOf(int index) {
-            for (OPEN_FLAG openFlag : OPEN_FLAG.values()) {
-                if (openFlag.ordinal() == index) {
-                    return openFlag;
+        public static OPEN_FLAG findFlag(String target) {
+
+            for (OPEN_FLAG key : OPEN_FLAG.values()) {
+                if (key.name().equals(target.toUpperCase())) {
+                    return key;
                 }
             }
             return null;
         }
+
+        private static boolean isDefaultValue(String target) {
+            OPEN_FLAG targetFlag = OPEN_FLAG.findFlag(target);
+            if (null == targetFlag) {
+                return false;
+            }
+            return 0 != (SpManager.INT_KEY.OPEN_APP_FLAG.defaultValue() & targetFlag.value);
+        }
+
+        static boolean isFlagEnabled(String target, int flag) {
+            OPEN_FLAG targetFlag = OPEN_FLAG.findFlag(target);
+            if (null == targetFlag) {
+                return false;
+            }
+            return (targetFlag.value & flag) > 0;
+        }
+
+        private static List<String> NAME_LIST = Collections.unmodifiableList(new ArrayList<String>() {{
+            for (OPEN_FLAG flag :OPEN_FLAG.values()) {
+                add(flag.name());
+            }
+        }});
+
+        static String[] NAMES = OPEN_FLAG.NAME_LIST.toArray(new String[OPEN_FLAG.values().length]);
     }
 
     public enum BOARD {
@@ -110,12 +126,13 @@ public class SettingsActivity extends AppCompatActivity {
             }
             return may;
         }
+
+        static String[] NAMES = Collections.unmodifiableList(new ArrayList<String>() {{
+            for (BOARD board :BOARD.values()) {
+                add(board.name());
+            }
+        }}).toArray(new String[BOARD.values().length]);
     }
-    private final static String[] BOARD_LIST = Collections.unmodifiableList(new ArrayList<String>() {{
-        for (BOARD board :BOARD.values()) {
-            add(board.name());
-        }
-    }}).toArray(new String[BOARD.values().length]);
 
     private int protocolIndex = 0;
     private int boardIndex = 0;
@@ -258,7 +275,7 @@ public class SettingsActivity extends AppCompatActivity {
                 final AtomicInteger index = new AtomicInteger(protocolIndex);
                 new AlertDialog.Builder(SettingsActivity.this)
                         .setTitle("Change Word")
-                        .setSingleChoiceItems(PROTOCOL_LIST, protocolIndex, new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(NetUtility.PROTOCOL.NAMES, protocolIndex, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 index.set(which);
@@ -267,10 +284,10 @@ public class SettingsActivity extends AppCompatActivity {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (-1 < index.get() && index.get() < PROTOCOL_LIST.length) {
+                                if (-1 < index.get() && index.get() < NetUtility.PROTOCOL.NAMES.length) {
                                     protocolIndex = index.get();
-                                    spManager.putString(SpManager.STRING_KEY.OPEN_PROTOCOL, PROTOCOL_LIST[protocolIndex]);
-                                    protocolTextView.setText(PROTOCOL_LIST[protocolIndex]);
+                                    spManager.putString(SpManager.STRING_KEY.OPEN_PROTOCOL, NetUtility.PROTOCOL.NAMES[protocolIndex]);
+                                    protocolTextView.setText(NetUtility.PROTOCOL.NAMES[protocolIndex]);
                                     isChanged = true;
                                 }
                             }
@@ -282,68 +299,68 @@ public class SettingsActivity extends AppCompatActivity {
 
         final AtomicInteger openFlag = new AtomicInteger(spManager.getInt(SpManager.INT_KEY.OPEN_APP_FLAG));
         final TextView openFlagTextView = findViewById(R.id.openFlagTextView);
-        openFlagTextView.setText(String.format("0x%08x", openFlag.get()));
+        openFlagTextView.setText(StringUtility.toHexString(openFlag.get()));
+
+        final CheckListAdapter checkListAdapter = new CheckListAdapter(this, Arrays.asList(OPEN_FLAG.NAMES));
+        final View openFlagView = LayoutInflater.from(this).inflate(R.layout.list_for_dialog, null);
+        final ListView openFlagListView = openFlagView.findViewById(R.id.forDialogListView);
+        openFlagListView.setAdapter(checkListAdapter);
+        openFlagListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                checkListAdapter.setChecked(position, !checkListAdapter.isChecked(position));
+            }
+        });
+        final AlertDialog openFlagDialog = new AlertDialog.Builder(this)
+                .setTitle("Select Open Flag")
+                .setView(openFlagView)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int newOpenFlag = openFlag.get();
+                        for (int i = 0; i < checkListAdapter.getCount(); i++) {
+                            OPEN_FLAG _openFlag = OPEN_FLAG.findFlag(checkListAdapter.getItem(i));
+                            if (null != _openFlag) {
+                                if (checkListAdapter.isChecked(i)) {
+                                    newOpenFlag |= _openFlag.value;
+                                } else {
+                                    newOpenFlag &= ~_openFlag.value;
+                                }
+                            }
+                        }
+                        if (0 != (openFlag.get() ^ newOpenFlag)) {
+                            isChanged = true;
+                            openFlag.set(newOpenFlag);
+                            spManager.putInt(SpManager.INT_KEY.OPEN_APP_FLAG, openFlag.get());
+                            openFlagTextView.setText(StringUtility.toHexString(openFlag.get()));
+                        }
+                    }
+                })
+                .setNeutralButton("Default", null)
+                .setNegativeButton("Cancel", null)
+                .create();
+        openFlagDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEUTRAL)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                for (int i = 0; i < checkListAdapter.getCount(); i++) {
+                                    checkListAdapter.setChecked(i, OPEN_FLAG.isDefaultValue(checkListAdapter.getItem(i)));
+                                }
+                            }
+                        });
+            }
+        });
+
         Button openFlagButton = findViewById(R.id.openFlagButton);
         openFlagButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View openFlagView = LayoutInflater.from(v.getContext()).inflate(R.layout.list_for_dialog, null);
-                final ListView openFlagListView = openFlagView.findViewById(R.id.forDialogListView);
-                final CheckListAdapter checkListAdapter = new CheckListAdapter(
-                        v.getContext(),
-                        new LinkedHashMap<String, Boolean>() {{
-                            for (OPEN_FLAG _openFlag : OPEN_FLAG.values()) {
-                                put(_openFlag.name(), (_openFlag.value & openFlag.get()) > 0);
-                            }
-                        }});
-                openFlagListView.setAdapter(checkListAdapter);
-                AlertDialog openFlagDialog = new AlertDialog.Builder(openFlagView.getContext())
-                        .setTitle("Select Open Flag")
-                        .setView(openFlagView)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                int newOpenFlag = openFlag.get();
-                                for (int i = 0; i < checkListAdapter.getCount(); i++) {
-                                    OPEN_FLAG _openFlag = OPEN_FLAG.indexOf(i);
-                                    if (null != _openFlag) {
-                                        if (checkListAdapter.isChecked(i)) {
-                                            newOpenFlag |= _openFlag.value;
-                                        } else {
-                                            newOpenFlag &= ~_openFlag.value;
-                                        }
-                                    }
-                                }
-                                if (0 != (openFlag.get() ^ newOpenFlag)) {
-                                    isChanged = true;
-                                    openFlag.set(newOpenFlag);
-                                    spManager.putInt(SpManager.INT_KEY.OPEN_APP_FLAG, openFlag.get());
-                                    openFlagTextView.setText(String.format("0x%08x", openFlag.get()));
-                                }
-                            }
-                        })
-                        .setNeutralButton("Default", null)
-                        .setNegativeButton("Cancel", null)
-                        .create();
-                openFlagDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialog) {
-                        ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEUTRAL)
-                                .setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        for (int i = 0; i < checkListAdapter.getCount(); i++) {
-                                            String item = checkListAdapter.getItem(i);
-                                            try {
-                                                checkListAdapter.setChecked(checkListAdapter.getItem(i),
-                                                        OPEN_FLAG.valueOf(item).isDefaultValue());
-                                                checkListAdapter.notifyDataSetChanged();
-                                            } catch (IllegalArgumentException ignored) {}
-                                        }
-                                    }
-                                });
-                    }
-                });
+                for (int i = 0; i < checkListAdapter.getCount(); i++) {
+                    checkListAdapter.setChecked(i, OPEN_FLAG.isFlagEnabled(checkListAdapter.getItem(i), openFlag.get()));
+                }
                 openFlagDialog.show();
             }
         });
@@ -360,7 +377,7 @@ public class SettingsActivity extends AppCompatActivity {
                 final AtomicInteger index = new AtomicInteger(boardIndex);
                 new AlertDialog.Builder(SettingsActivity.this)
                         .setTitle("Change Board")
-                        .setSingleChoiceItems(BOARD_LIST, boardIndex, new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(BOARD.NAMES, boardIndex, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 index.set(which);
@@ -369,10 +386,10 @@ public class SettingsActivity extends AppCompatActivity {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (-1 < index.get() && index.get() < BOARD_LIST.length) {
+                                if (-1 < index.get() && index.get() < BOARD.NAMES.length) {
                                     boardIndex = index.get();
-                                    spManager.putString(SpManager.STRING_KEY.SEARCH_BOARD, BOARD_LIST[boardIndex]);
-                                    openBoardTextView.setText(BOARD_LIST[boardIndex]);
+                                    spManager.putString(SpManager.STRING_KEY.SEARCH_BOARD, BOARD.NAMES[boardIndex]);
+                                    openBoardTextView.setText(BOARD.NAMES[boardIndex]);
                                     isChanged = true;
                                 }
                             }
