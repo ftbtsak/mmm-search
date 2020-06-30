@@ -156,27 +156,27 @@ public class MainActivity extends AppCompatActivity {
                     case URL:
                         clipboardManager.setPrimaryClip(
                                 ClipData.newPlainText("", threadInfo.threadURL().toString()));
-                        Toast.makeText(v.getContext(), "URL copied:" + threadInfo.threadURL().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(v.getContext(), "URL copied:" + threadInfo.threadURL().toString(), Toast.LENGTH_SHORT).show();
                         break;
                     case IMAGE:
                         if (null != threadInfo.imgUrl()) {
                             clipboardManager.setPrimaryClip(
                                     ClipData.newPlainText("", threadInfo.imgUrl().toString()));
-                            Toast.makeText(v.getContext(), "Image URL copied:" + threadInfo.imgUrl(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(v.getContext(), "Image URL copied:" + threadInfo.imgUrl(), Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case MAIL:
                         if (!"".equals(threadInfo.mail())) {
                             clipboardManager.setPrimaryClip(
                                     ClipData.newPlainText("", threadInfo.mail()));
-                            Toast.makeText(v.getContext(), "Mail copied:" + threadInfo.mail(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(v.getContext(), "Mail copied:" + threadInfo.mail(), Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case TITLE:
                         if (!"".equals(threadInfo.titleEscapeHtml())) {
                             clipboardManager.setPrimaryClip(
                                     ClipData.newPlainText("", threadInfo.titleEscapeHtml()));
-                            Toast.makeText(v.getContext(), "Title copied:" + threadInfo.titleEscapeHtml(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(v.getContext(), "Title copied:" + threadInfo.titleEscapeHtml(), Toast.LENGTH_SHORT).show();
                         }
                         break;
                     default:
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isSearching) {
                     searchResultListAdapter.clear();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Search finished.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Search finished.", Toast.LENGTH_SHORT).show();
                 }
                 changeWordButton.setEnabled(!isSearching);
                 searchButton.setEnabled(!isSearching);
