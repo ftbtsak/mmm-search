@@ -25,9 +25,7 @@ import com.tsak.ftb.mmmsearch.settings.SettingsActivity;
 import com.tsak.ftb.mmmsearch.settings.SpManager;
 import com.tsak.ftb.mmmsearch.utility.NetUtility;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {

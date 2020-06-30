@@ -57,6 +57,12 @@ public class NetUtility {
             }
             return HTTP;
         }
+
+        public static String[] NAMES = Collections.unmodifiableList(new ArrayList<String>() {{
+            for (PROTOCOL protocol :PROTOCOL.values()) {
+                add(protocol.name());
+            }
+        }}).toArray(new String[PROTOCOL.values().length]);
     }
 
     private final static int TIMEOUT_MS = 60000;
