@@ -27,6 +27,7 @@ import com.tsak.ftb.mmmsearch.utility.NetUtility;
 
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,18 +64,21 @@ public class MainActivity extends AppCompatActivity {
         changeWordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final AtomicInteger index = new AtomicInteger(wordIndex);
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Change Word")
                         .setSingleChoiceItems(TARGET_WORDS, wordIndex, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                wordIndex = which;
+                                index.set(which);
                             }
                         })
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (-1 < wordIndex && wordIndex < TARGET_WORDS.length) {
+                                if ((index.get() != wordIndex) &&
+                                        (-1 < index.get()) && (index.get() < TARGET_WORDS.length)) {
+                                    wordIndex = index.get();
                                     spManager.putInt(SpManager.INT_KEY.SEARCH_WORD_INDEX, wordIndex);
                                     targetWordTextView.setText(TARGET_WORDS[wordIndex]);
                                 }
