@@ -246,7 +246,13 @@ public class MainActivity extends AppCompatActivity {
                 if (isSearching) {
                     searchResultListAdapter.clear();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Search finished.", Toast.LENGTH_SHORT).show();
+                    String msgSuffix = " found.";
+                    if (searchResultListAdapter.getCount() > 1) {
+                        msgSuffix = " threads" + msgSuffix;
+                    } else {
+                        msgSuffix = " thread" + msgSuffix;
+                    }
+                    Toast.makeText(getApplicationContext(), searchResultListAdapter.getCount() + msgSuffix, Toast.LENGTH_SHORT).show();
                 }
                 changeWordButton.setEnabled(!isSearching);
                 searchButton.setEnabled(!isSearching);

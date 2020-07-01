@@ -208,8 +208,8 @@ public class SettingsActivity extends AppCompatActivity {
                 })
                 .create();
 
-        Button chooseAppButton = findViewById(R.id.chooseAppButton);
-        chooseAppButton.setOnClickListener(new View.OnClickListener() {
+        Button selectAppButton = findViewById(R.id.selectAppButton);
+        selectAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Handler handler = new Handler();
@@ -268,13 +268,13 @@ public class SettingsActivity extends AppCompatActivity {
         protocolTextView.setText(openProtocol.name());
         protocolIndex = openProtocol.ordinal();
 
-        Button chooseProtocolButton = findViewById(R.id.chooseProtocolButton);
-        chooseProtocolButton.setOnClickListener(new View.OnClickListener() {
+        Button selectProtocolButton = findViewById(R.id.selectProtocolButton);
+        selectProtocolButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final AtomicInteger index = new AtomicInteger(protocolIndex);
                 new AlertDialog.Builder(SettingsActivity.this)
-                        .setTitle("Change Word")
+                        .setTitle("Select Protocol")
                         .setSingleChoiceItems(NetUtility.PROTOCOL.NAMES, protocolIndex, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -312,7 +312,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
         final AlertDialog openFlagDialog = new AlertDialog.Builder(this)
-                .setTitle("Select Open Flag")
+                .setTitle("Choose Open Flag")
                 .setView(openFlagView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -354,8 +354,8 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        Button openFlagButton = findViewById(R.id.openFlagButton);
-        openFlagButton.setOnClickListener(new View.OnClickListener() {
+        Button chooseOpenFlagButton = findViewById(R.id.chooseOpenFlagButton);
+        chooseOpenFlagButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < checkListAdapter.getCount(); i++) {
@@ -370,13 +370,13 @@ public class SettingsActivity extends AppCompatActivity {
         openBoardTextView.setText(board.name());
         boardIndex = board.ordinal();
 
-        Button chooseBoardButton = findViewById(R.id.chooseBoardButton);
-        chooseBoardButton.setOnClickListener(new View.OnClickListener() {
+        Button selectBoardButton = findViewById(R.id.selectBoardButton);
+        selectBoardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final AtomicInteger index = new AtomicInteger(boardIndex);
                 new AlertDialog.Builder(SettingsActivity.this)
-                        .setTitle("Change Board")
+                        .setTitle("Select Board")
                         .setSingleChoiceItems(BOARD.NAMES, boardIndex, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
