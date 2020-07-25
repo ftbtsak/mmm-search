@@ -23,8 +23,12 @@ import static com.tsak.ftb.mmmsearch.utility.NetUtility.PROTOCOL_SUFFIX;
 public class ThreadSearcher {
 
     private final static String SEARCH_KEY = NetUtility.PATH_SEPARATOR + "futaba.php?guid=on&mode=search&keyword=";
-    private final static String JSON_BEGIN_SIGNATURE = "<script type=\"text/javascript\">var ret=JSON.parse('";
-    private final static String JSON_END_SIGNATURE = "');</script><script type=\"text/javascript\" src=\"";
+    private final static String JSON_BEGIN_SIGNATURE_PREFIX = "<script type=\"text/javascript\">var ret=";
+    private final static String JSON_BEGIN_SIGNATURE_1 = JSON_BEGIN_SIGNATURE_PREFIX + "JSON.parse('";
+    private final static String JSON_BEGIN_SIGNATURE_2 = JSON_BEGIN_SIGNATURE_PREFIX;
+    private final static String JSON_END_SIGNATURE_SUFFIX = ";</script><script type=\"text/javascript\" src=\"";
+    private final static String JSON_END_SIGNATURE_1 = "')" + JSON_END_SIGNATURE_SUFFIX;
+    private final static String JSON_END_SIGNATURE_2 = JSON_END_SIGNATURE_SUFFIX;
     private final static String RES_KEY = "res";
     private final static String RESTO_KEY = "resto";
     private final static String COM_KEY = "com";
@@ -126,16 +130,23 @@ public class ThreadSearcher {
         return Collections.unmodifiableMap(threadIdMap);
     }
 
-    private List<Integer> parseThreadIdList(String html) {
+    private List<Integer> parseThreadIdList(String src) {
 
         List<Integer> idList = new ArrayList<>();
-        html = html.replaceAll("\\\\\"", "\\\"");
-        int beginIndex = html.indexOf(JSON_BEGIN_SIGNATURE);
-        int endIndex = html.lastIndexOf(JSON_END_SIGNATURE);
-        if (-1 < beginIndex && beginIndex + JSON_BEGIN_SIGNATURE.length() < endIndex) {
+        String html = src.replaceAll("\\\\\"", "\\\"");
+        int beginOffset = JSON_BEGIN_SIGNATURE_1.length();
+        int beginIndex = html.indexOf(JSON_BEGIN_SIGNATURE_1);
+        int endIndex = html.lastIndexOf(JSON_END_SIGNATURE_1);
+        if (-1 == beginIndex) {
+            html = src.replaceAll("\"", "\\\"");
+            beginOffset = JSON_BEGIN_SIGNATURE_2.length();
+            beginIndex = html.indexOf(JSON_BEGIN_SIGNATURE_2);
+            endIndex = html.lastIndexOf(JSON_END_SIGNATURE_2);
+        }
+        if (-1 < beginIndex && beginIndex + beginOffset < endIndex) {
             try {
                 JSONObject jsonObject = JsonUtility.getJson(
-                        new JSONObject(html.substring(beginIndex + JSON_BEGIN_SIGNATURE.length(), endIndex)),
+                        new JSONObject(html.substring(beginIndex + beginOffset, endIndex)),
                         RES_KEY);
                 Iterator keys = jsonObject.keys();
                 while(keys.hasNext()) {
